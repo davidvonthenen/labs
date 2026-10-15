@@ -5,6 +5,9 @@
 __pycache__/
 *.pyc
 
+#
+rag-retrieval/support/commands.txt
+
 # agentic rag
 !.env.openai.example
 !.env.nebius.example
