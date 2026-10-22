@@ -9,16 +9,21 @@ distinguish a real bug from expected behavior (e.g. Governance Tiering's escalat
 
 ## Setup
 
-### `RuntimeError: Missing configuration in .env`
+### `RuntimeError: Missing configuration in the environment or optional .env`
 
-Raised by `support/common/config.py`'s `require_configured()`, which every task
-calls before connecting to anything. The message lists each problem it found:
-an empty or placeholder `OPENSEARCH_HOST`, an empty `OPENSEARCH_USER` or
-`OPENSEARCH_PASSWORD`, and an empty `BEDROCK_MODEL_ID` (or, with
-`LLM_PROVIDER=openai`, an empty `OPENAI_API_KEY` or `OPENAI_MODEL`). Fix: `cp
-support/.env.example .env` if you haven't already, then fill in real values. A
-stale copy of `.env.example` with the placeholder host
-(`your-cluster-host.instaclustr.com`) triggers this same error.
+`support/common/config.py`'s `require_configured()` checks cluster settings
+and, for generation, the selected provider's settings. The message names
+missing values: `OPENSEARCH_HOST`, `OPENSEARCH_USER`, `OPENSEARCH_PASSWORD`,
+then `OPENAI_API_KEY` / `OPENAI_MODEL` for the default `openai` provider,
+`ANTHROPIC_API_KEY` / `ANTHROPIC_MODEL` for `anthropic`, or
+`BEDROCK_MODEL_ID` for `bedrock`. Bedrock also needs valid AWS credentials.
+Ingestion does not require generation credentials. For provider authentication, model,
+or parameter failures, see [provider request errors](setup-environment.md#provider-authentication-model-or-parameter-errors).
+
+Configure the named values through `insta config`, the inherited environment,
+or a lab-root `.env` copied from `support/.env.example`. Do not overwrite an
+existing configured file or print secret values while diagnosing. An old
+placeholder host (`your-cluster-host.instaclustr.com`) also fails this check.
 
 The check does **not** recognise the placeholder user and password from
 `.env.example` (`your-username`, `your-password`). If you set the host but leave
@@ -45,21 +50,20 @@ Linux/Windows, or if this still doesn't resolve it, fall back to
 installing your proxy's root CA into `certifi`'s bundle manually, or set
 `SSL_CERT_FILE`/`REQUESTS_CA_BUNDLE` yourself before running any task.
 
-### `AccessDeniedException` calling Bedrock
+### Bedrock authorization errors
 
-Bedrock model access is an explicit **per-model opt-in** in the AWS
-console (Bedrock → Model access), separate from having Bedrock IAM
-permissions at all. Check that the exact model in `BEDROCK_MODEL_ID` shows
-as "Access granted" there — not just that your IAM user/role has
-`bedrock:InvokeModel`.
+The `anthropic.AnthropicBedrock` client authenticates with AWS credentials.
+Verify the active AWS identity/profile, the configured region, access to the
+selected Claude model or inference profile, and permission to invoke it.
+An Anthropic API key does not grant AWS access. The setup credential check
+only discovers credentials; it does not verify model authorization.
 
 ### `ValidationException: The provided model identifier is invalid`
 
-`BEDROCK_MODEL_ID` must be the exact model ID string from Bedrock's Model
-access page (e.g.
-`anthropic.claude-3-5-sonnet-20241022-v2:0`), and it must be available in
-the region set by `AWS_REGION` — Bedrock model availability varies by
-region.
+`BEDROCK_MODEL_ID` must be an exact Claude model ID or supported inference
+profile ID for your AWS account and `AWS_REGION`. A direct Anthropic API model
+ID is not interchangeable with a Bedrock identifier. Check the selected
+provider's current model listing and access configuration.
 
 ### `ValidationException: Invocation of model ID ... with on-demand throughput isn't supported`
 
@@ -73,6 +77,10 @@ over time, so treat the console as the source of truth.
 
 ## Runtime
 
+### `OldLayoutIndexError: Index ... has the older one-document-per-recipe layout`
+
+The index named in the message already exists, and its mapping has no `chunk_id` field, so it was built by an earlier version of this lab that stored one document per recipe. A query never deletes an index, so it stops here. Run this task's ingest (`make ingest`, or `python -m src.ingest`), which replaces that index with the chunk layout and logs a `WARNING` when it does. If the index belongs to someone else, do not run ingest: give your own indexes a suffix first (Task 1, Step 3).
+
 ### OpenSearch connection suddenly fails after previously working
 
 If `OPENSEARCH_HOST` hasn't changed but connections still fail, verify the
@@ -80,6 +88,21 @@ value in your *current* `.env` against the Instaclustr console — a
 cluster's load-balancer hostname can change (e.g. after a resize/restore),
 and a stale hostname produces a generic connection-timeout error that
 looks like a network problem, not a config problem.
+
+A second common cause is the cluster's firewall rules (its IP allow-list). If
+your public IP changed (a different network, a VPN, or a corporate proxy that
+rotates its address), the cluster stops answering and connections hang until
+they time out. The OpenSearch client waits up to 60 seconds and retries three
+times, so a command can look frozen for several minutes. To test without
+waiting:
+
+```bash
+curl -s -o /dev/null -m 15 -w "%{http_code}\n" https://<your OPENSEARCH_HOST>:9200/
+```
+
+`401` means the cluster is reachable (it wants a password). `000` after the
+15 seconds means it is not answering from this machine: add your current public
+IP to the cluster's firewall rules in the Instaclustr console.
 
 ### Results differ from a task's documented sample output
 
