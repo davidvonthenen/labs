@@ -57,7 +57,7 @@ before they show up in production, not after.
 
 | This Lab | Local Laptop | CLI | Notebook | Videos |
 | --- | --- | --- | --- | --- |
-| **RAG Developer Journey** | [Getting Started](#getting-started) | _Coming soon:_<br>Codex<br>Claude<br>Cursor | _Coming soon_ | _Coming soon_ |
+| **RAG Developer Journey** | [Getting Started](#getting-started) | [Coding assistants](#learn-with-codex-claude-code-or-cursor) | _Coming soon_ | _Coming soon_ |
 
 ## Tasks
 
@@ -97,7 +97,39 @@ Every task runs from its own directory under `scripts/`, with `python -m src.<mo
 
 ## Learn with Codex, Claude Code, or Cursor
 
-Coming Soon
+Open the complete `rag-retrieval/` folder in your coding tool. The human task
+pages, source maps, and code are also the template that an agent uses to explain
+the lab, make a scoped change, or build a retrieval project for another corpus.
+
+Start with [AGENTS.md](AGENTS.md) and
+[Using this workshop as a project template](USING_THE_TEMPLATE.md). The
+[task manifest](references/lab.json) records exact working directories,
+command arguments, prerequisites, side effects, and acceptance conditions.
+The [agent runtime contract](references/agent-contracts.md) explains how to
+interpret the existing commands and which operations modify resources.
+
+Codex can use the repository-local `instaclustr-rag-builder` Skill under
+[`.agents/skills/`](.agents/skills/instaclustr-rag-builder/SKILL.md). For example:
+
+```text
+Use $instaclustr-rag-builder to help me build a project from this workshop.
+Read USING_THE_TEMPLATE.md and the relevant source before editing. Help me
+select a retrieval pattern for my corpus, implement the scoped adaptation,
+and verify the result using the existing commands and documented effects.
+```
+
+For another coding tool, explicitly ask it to read `AGENTS.md`, the local
+Skill's Markdown, and the selected task's source map. Automatic instruction
+discovery depends on the client. The guide includes
+[portable and project-building prompts](USING_THE_TEMPLATE.md#7-prompts-for-coding-tools).
+
+Before connecting to services, install `support/requirements-test.txt` in the
+selected environment and run `python scripts/validate_lab.py` from the lab
+root. It checks the local documentation and metadata; task `make validate`
+commands remain separate live checks. See the
+[validation report](VALIDATION_REPORT.md) for executed checks and client/runtime
+verification boundaries. This revision provides a local agent workflow; the
+future `insta` CLI is not implemented.
 
 ## Jupyter Notebook
 
