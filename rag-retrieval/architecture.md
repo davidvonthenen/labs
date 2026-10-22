@@ -12,6 +12,13 @@ page in `tasks/`; this page does not repeat those walkthroughs.
 
 Use this page as a source-navigation reference: read the system contract first, then use the task-to-source map to open only the files relevant to the task you are changing. Why each piece of infrastructure was chosen is explained separately in [Infrastructure choices, and why](concepts/INFRASTRUCTURE_CHOICES.md).
 
+For coding tools, start with [AGENTS.md](AGENTS.md), the
+[task manifest](references/lab.json), and the
+[agent execution contract](references/agent-contracts.md). To turn a selected
+retrieval pattern into another project, follow
+[USING_THE_TEMPLATE.md](USING_THE_TEMPLATE.md). These entry points reuse this
+architecture and the existing task source maps.
+
 **Source-of-truth order:** executable code under `scripts/` and `support/common/`, then the per-task Makefiles and `support/requirements.txt`, then this document and the task pages. When a comment or page disagrees with a function body, follow the function body.
 
 **What this lab is not.** "Tier" (`hot` / `lt`) is a governance label stored in a `tier` field; it is not OpenSearch hot/warm storage and nothing moves between storage classes. The recipe answers are not dietary or allergen advice ([Safety & Scope](references/SAFETY_AND_SCOPE.md)). Nothing is trained or tuned: the embedding model, the spaCy model and the LLM are used as downloaded or hosted, and the only "tuning" is the retrieval thresholds in [Configuration](#6-configuration-and-deployment-boundaries).
@@ -324,7 +331,20 @@ Add a new task, or a variation of one, by keeping to the same shape:
 
 **Verification boundaries.** The recorded end-to-end baseline above is not evidence of a new end-to-end run on Python 3.12 or spaCy 3.8.16. Live OpenAI calls, the updated dependency stack against Instaclustr/Bedrock, non-macOS systems (the CA-bundle self-heal does nothing there), other OpenSearch versions, larger data than the 260-recipe sample, and concurrent users still require integration verification.
 
-**Regression checks.** The `tests/` suite covers SDK request construction, configuration/root resolution, Python version policy, and spaCy model validation without hosted services. Install `support/requirements-test.txt` after the shared requirements, then run `python -m unittest discover -s tests -v`. Tests using the real SDK and NER model are skipped when those dependencies are absent; skipped checks are not passes. No CI workflow is included. The task `validate.py` scripts remain live-service smoke tests, and several require the NER service. Treat a green task run as "the demonstrated behavior still holds on this data", not exhaustive retrieval-regression coverage.
+**Local document and metadata checks.** Install `support/requirements-test.txt`
+in the selected Python environment, then run `python scripts/validate_lab.py`
+and `python -m unittest discover -s tests -v` from the lab root. These checks
+need no retrieval dependencies or credentials: the validator checks the task
+manifest/schema, declared paths and command entry points, local Markdown links,
+task structure, Skill metadata, and Python syntax. The test suite covers that
+validator and deliberately broken fixtures. It does not cover SDK request
+construction, model loading, or retrieval behavior. No CI workflow is included.
+The task `validate.py` scripts remain live-service smoke tests, and several
+require NER or modify remote resources; their effects are recorded in
+[the manifest](references/lab.json). Treat a green task run as "the demonstrated
+behavior still holds on this data", not exhaustive retrieval-regression
+coverage. The [validation report](VALIDATION_REPORT.md) records evidence for
+this revision separately from the earlier baseline above.
 
 **Suggested workflow for a change.** Read the task's source map under `references/`; change the shared module first if the change is shared; rerun `make validate` in every task that imports it (a change in `opensearch_client.py` can affect Tasks 2 to 7); update the task page if a command, output or number changed; check that links and anchors still resolve.
 
