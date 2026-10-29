@@ -71,7 +71,7 @@ cd scripts/introduction
 
 Keep this host terminal in that directory for all `podman compose` commands. It contains the supplied [Compose definition](../scripts/introduction/docker-compose.yaml) and environment templates; the development image supplies the Python workspace and its runtime tooling. You do not need to write a Dockerfile or install Python on the host for the default path.
 
-The supplied development image provides the workshop code and configuration in `/workspace/agentic-rag`. This is a **separate checkout from the host directory**. Editing a host source file does not automatically change the container's copy. The supplied Compose definition does not mount persistent workspace storage; preserve local changes and audit files before removing or replacing the container.
+The supplied development image provides the workshop code and configuration in `/workspace/agentic-moe`. This is a **separate checkout from the host directory**. Editing a host source file does not automatically change the container's copy. The supplied Compose definition does not mount persistent workspace storage; preserve local changes and audit files before removing or replacing the container.
 
 ## Step 2: choose your external inference provider
 
@@ -232,7 +232,7 @@ python -m pip check
 ls 2-news-agent 3-financials-agent 4-orchestrator-agent
 ```
 
-**Expected:** the working directory is `/workspace/agentic-rag`, Python reports `3.12.x`, pip reports no broken requirements, and all three application directories exist.
+**Expected:** the working directory is `/workspace/agentic-moe`, Python reports `3.12.x`, pip reports no broken requirements, and all three application directories exist.
 
 To open another session, use a **new host terminal**, return to this task directory, and repeat:
 

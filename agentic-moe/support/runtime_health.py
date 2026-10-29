@@ -17,7 +17,7 @@ class Handler(BaseHTTPRequestHandler):
         if self.path != "/healthz":
             self.send_error(404)
             return
-        repo = Path(os.environ.get("LAB_REPO_DIR", "/workspace/agentic-rag"))
+        repo = Path(os.environ.get("LAB_REPO_DIR", "/workspace/agentic-moe"))
         ready = all((repo / part / "Makefile").is_file() for part in
                     ("2-news-agent", "3-financials-agent", "4-orchestrator-agent"))
         body = json.dumps({"service": "agentic-lab", "status": "ok" if ready else "not_ready",

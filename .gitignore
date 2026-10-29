@@ -17,7 +17,7 @@ ai_media_dataset_20250911-1000lines.csv
 quarterly_filings
 
 ## build
-agentic-rag/support/opensearch
+agentic-moe/support/opensearch
 opensearch-users.csv
 
 # Byte-compiled / optimized / DLL files

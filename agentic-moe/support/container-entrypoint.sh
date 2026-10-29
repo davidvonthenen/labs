@@ -5,7 +5,7 @@
 set -euo pipefail
 
 readonly SOURCE_REPO=/opt/lab/repository
-readonly TARGET_REPO="${LAB_REPO_DIR:-/workspace/agentic-rag}"
+readonly TARGET_REPO="${LAB_REPO_DIR:-/workspace/agentic-moe}"
 mkdir -p "$TARGET_REPO"
 
 if [[ ! -f "$TARGET_REPO/.lab-revision" ]]; then

@@ -74,7 +74,7 @@ podman compose exec lab bash
 Then run **inside each container shell**:
 
 ```bash
-cd /workspace/agentic-rag/2-news-agent
+cd /workspace/agentic-moe/2-news-agent
 pwd
 ```
 

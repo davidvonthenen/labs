@@ -1,0 +1,6 @@
+up:
+  tasks:
+    - operationalize-production.md
+
+env:
+  - 

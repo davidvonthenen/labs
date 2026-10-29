@@ -36,7 +36,7 @@ podman compose exec lab bash
 In **both container shells**, run:
 
 ```bash
-cd /workspace/agentic-rag/5-client
+cd /workspace/agentic-moe/5-client
 pwd
 ```
 
@@ -197,7 +197,7 @@ A newly opened shell cannot recover exports made only in another shell. If a ser
 In the **Inspection terminal**:
 
 ```bash
-cd /workspace/agentic-rag/5-client
+cd /workspace/agentic-moe/5-client
 read -r -p "Routing-trace audit_id (Enter to list recent records): " ORCH_AUDIT_ID
 export ORCH_AUDIT_ID
 ```
@@ -212,7 +212,7 @@ import subprocess
 import sys
 from pathlib import Path
 
-root = Path("/workspace/agentic-rag")
+root = Path("/workspace/agentic-moe")
 packages = {
     "orchestrator": ("4-orchestrator-agent", "src.host_agent.config",
                      "src.host_agent.audit"),

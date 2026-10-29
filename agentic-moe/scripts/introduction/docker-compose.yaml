@@ -1,15 +1,15 @@
 services:
   lab:
-    image: docker.io/davidvonthenen/netapp-instaclustr-agentic-lab-dev:0.0.16
+    image: docker.io/davidvonthenen/netapp-instaclustr-agentic-lab-dev:0.0.17
     container_name: agentic-lab
-    working_dir: /workspace/agentic-rag
+    working_dir: /workspace/agentic-moe
     stdin_open: true
     tty: true
     environment:
       # OPENSEARCH_HOST: opensearch-single
       # OPENSEARCH_DASHBOARDS_URL: http://opensearch-single-dashboards:5601
       LAB_HEALTH_URL: http://lab:8088/healthz
-      LAB_REPO_DIR: /workspace/agentic-rag
+      LAB_REPO_DIR: /workspace/agentic-moe
       LAB_CONTAINER: "true"
       HF_HOME: /home/lab/.cache/huggingface
       USE_EXTERNAL_AI: ${USE_EXTERNAL_AI:-true}

@@ -80,7 +80,7 @@ When the environment was started with Podman, use `podman compose exec lab bash`
 In both **container shells**, enter the task directory:
 
 ```bash
-cd /workspace/agentic-rag/4-orchestrator-agent
+cd /workspace/agentic-moe/4-orchestrator-agent
 pwd
 ```
 

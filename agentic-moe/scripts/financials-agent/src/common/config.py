@@ -26,7 +26,9 @@ class Settings:
     opensearch_index: str = "agenticrag-finfile-vector-chunks"
 
     # Embeddings and retrieval
-    embedding_model: str = "Qwen/Qwen3-Embedding-0.6B"
+    # use sentence-transformers/all-MiniLM-L6-v2 for systems without GPU acceleration
+    # use Qwen/Qwen3-Embedding-0.6B for more production-like results
+    embedding_model: str = "sentence-transformers/all-MiniLM-L6-v2"
     rag_top_k: int = 3
     rag_num_candidates: int = 3
 

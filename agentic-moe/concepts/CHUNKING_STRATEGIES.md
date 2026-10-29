@@ -167,7 +167,7 @@ The following example uses Python's standard library and the existing ingestion 
 In a development-container shell, change to the source directory:
 
 ```bash
-cd /workspace/agentic-rag/2-news-agent
+cd /workspace/agentic-moe/2-news-agent
 ```
 
 Save the complete block below as `chunking_examples.py` in that directory. This is a **new scratch file**; do not replace `src/ingest.py`.

@@ -62,7 +62,7 @@ Run this from the host directory containing the Compose file. When the environme
 In each **container shell**, locate and enter the Financial Expert directory:
 
 ```bash
-cd /workspace/agentic-rag/3-financials-agent
+cd /workspace/agentic-moe/3-financials-agent
 pwd
 ```
 
