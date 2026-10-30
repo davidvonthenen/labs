@@ -49,13 +49,6 @@ Other coding tools can read the same files directly. Use the portable prompt in
 [section 7](#7-prompts-for-coding-tools); automatic discovery depends on the
 client. Uploading a ZIP alone is not evidence that its instructions activated.
 
-The existing [Compose configuration](support/docker-compose.yaml) uses a
-published image with its own source snapshot and no mount of this checkout.
-For code changes, use the native environment described in
-[Task 1](tasks/setup-environment.md). A host edit will not appear inside the
-published container. The container's `/healthz` endpoint establishes process
-liveness, not OpenSearch, LLM, or NER readiness.
-
 ### Where each kind of information lives
 
 | Artifact | Purpose |
@@ -71,9 +64,7 @@ liveness, not OpenSearch, LLM, or NER readiness.
 | [references/agent-evals.md](references/agent-evals.md) | Representative agent requests and observable review criteria. |
 | [VALIDATION_REPORT.md](VALIDATION_REPORT.md) | Checks performed for this delivered revision and checks still requiring services or a client. |
 
-Manifest commands are discovery metadata. No launcher reads the manifest to
-create, deploy, or destroy a project, and the document checker never executes
-those commands.
+`references/lab.json` is discovery metadata for the Python teaching commands; the document checker never executes it. The separate `insta.yaml` describes commands and lifecycle actions for the Go CLI. See [INSTA.md](INSTA.md) for that integration and its pinned-source release boundary.
 
 ## 2. Check the source package before using services
 
@@ -127,10 +118,10 @@ instruction to include every architecture in a new application.
 | --- | --- | --- |
 | Meaning-based retrieval over short documents | [Baseline Vector RAG](references/baseline-vector-rag.md) | Semantic similarity does not establish document identity or a hard constraint. |
 | Exact names, identifiers, and keyword matching | [Baseline BM25 RAG](references/baseline-bm25-rag.md) | This implementation includes a local NER score boost; it is not an NER-free BM25 example. |
-| A server-side blend of lexical and semantic signals | [Hybrid RAG (Native)](references/hybrid-rag-native.md) | Uses one index and an OpenSearch search pipeline; the query updates the fixed shared pipeline. |
+| A server-side blend of lexical and semantic signals | [Hybrid RAG (Native)](references/hybrid-rag-native.md) | Uses one index and an OpenSearch search pipeline; ingestion updates its index-derived pipeline, and queries preserve it. |
 | Structured exclusions or requirements before semantic refinement | [Hybrid RAG (NER + Rerank)](references/hybrid-rag-ner-rerank.md) | Two indexes must agree on IDs and metadata. The second phase is kNN refinement, not a cross-encoder. |
 | Priority retrieval, escalation, and an evidence/audit record | [Governance Tiering](references/governance-tiering.md) | Tiers are document labels. Audit writes and citation checks have the limits documented in the source. |
-| Monitoring and policy checks around that audit trail | [Operationalize Production](references/operationalize-production.md) | Adds operational examples; its retention validation can install whole-index deletion. |
+| Monitoring and policy checks around that audit trail | [Operationalize Production](references/operationalize-production.md) | Adds operational examples; its validation is read-only; retention installation is a separate explicit administration step. |
 
 For example, a support-article project with exact error codes and paraphrased
 symptoms can start from the native hybrid task. If the project also requires
@@ -192,9 +183,7 @@ and [runtime contract](references/agent-contracts.md) before ingestion:
   configured environment settings, so keep both destinations aligned.
 - Two-phase retrieval and governance share the same BM25/vector index settings.
   Re-running the former's ingestor resets the governance tiers to `hot`.
-- Native hybrid and retention resources have fixed cluster-wide names in the
-  source. A new index suffix does not isolate those resources; explicitly
-  design their ownership before using them in another project.
+- Native hybrid pipeline and retention-policy names are derived from their configured indexes. Use distinct index names for independent projects and review the ownership of existing resources before changing them.
 - Changed mappings or embedding dimensions require an appropriate new index
   and reindexing plan. Current `ensure_*` helpers do not migrate existing data.
 
@@ -352,10 +341,9 @@ Current primary references for the agent layer:
 - [OpenAI: build Skills and local discovery](https://learn.chatgpt.com/docs/build-skills).
 - [JSON Schema: Draft 2020-12](https://json-schema.org/draft/2020-12).
 
-The future `insta` project-management experience may discover workshops from
-[instaclustr/labs](https://github.com/instaclustr/labs), with command concepts
-inspired by the [Pulumi CLI](https://www.pulumi.com/docs/iac/cli/). This revision
-adds no project discovery, project generator, stack manager, configuration CLI,
-deployment, destruction, MCP server, or plugin installation. The manifest
-describes this workshop only; it is not a promised interface for that future
-CLI.
+The Go `insta` project-management implementation discovers the labs from
+[instaclustr/labs](https://github.com/instaclustr/labs). This package includes its
+lab definitions; it does not contain the CLI binary or alter the CLI's pinned
+catalog. Read [INSTA.md](INSTA.md) before replacing a generated project or
+releasing this lab through a new CLI catalog revision. The Python interfaces,
+source maps and teaching sequence remain usable without the CLI.
