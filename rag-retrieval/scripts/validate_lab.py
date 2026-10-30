@@ -20,7 +20,7 @@ from urllib.parse import unquote, urlsplit
 
 
 EXCLUDED_DIRS = {
-    ".git", ".venv", "venv", ".cache", ".pytest_cache", "__pycache__",
+    ".git", ".insta", ".venv", "venv", ".cache", ".pytest_cache", "__pycache__",
     "node_modules", "build", "dist", "artifacts", ".aws",
 }
 EXECUTABLE_LANGUAGES = {"bash", "sh", "shell", "zsh", "python", "py", "sql", "http", "console"}
@@ -178,6 +178,16 @@ class LabValidator:
                 expected = self.root / "support/common"
                 if not (self.root / value).is_symlink() or resolved != expected.resolve() or not all((expected / name).is_file() for name in ("__init__.py", "config.py")):
                     self.error("shared_package_link", value, "Preserve this symlink to support/common with its __init__.py and config.py; a text file or another package is not equivalent.")
+        # Archive tools can silently expand the shared links into copies. Those
+        # copies change __file__-relative paths and drift from the shared code.
+        expected = (self.root / "support/common").resolve()
+        for source in sorted((self.root / "scripts").glob("*/src")):
+            common = source / "common"
+            if not common.is_symlink() or common.resolve() != expected:
+                self.error(
+                    "shared_package_link", str(common.relative_to(self.root)),
+                    "Expected a relative symlink to ../../../support/common; preserve links when packaging and extracting the lab.",
+                )
         self.report["checked"].append("declared_paths")
 
     def check_graph(self, manifest: dict) -> None:

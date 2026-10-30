@@ -65,8 +65,8 @@ def check_python() -> Result:
     found = sys.version_info[:3]
     text = ".".join(str(p) for p in found)
     recommended = ".".join(str(p) for p in RECOMMENDED_PYTHON)
-    if found < MIN_PYTHON + (0,):
-        return False, f"Python {text} found; Python 3.10+ is required (3.12 recommended)"
+    if found < MIN_PYTHON + (0,) or found >= (3, 15, 0):
+        return False, f"Python {text} found; Python 3.10-3.14 is supported (3.12 recommended)"
     if found[:2] == RECOMMENDED_PYTHON:
         return True, f"Python {text} (recommended version)"
     return True, f"Python {text}; Python {recommended} is the default recommended version"
@@ -127,7 +127,7 @@ def _settings():
 
 
 def check_env_file() -> Result:
-    # Match common.config: current directory, lab root, then support/.env.
+    # Files are optional: the current shell has precedence in common.config.
     if (Path.cwd() / ".env").is_file():
         where = "at the lab root" if Path.cwd().resolve() == LAB_ROOT else "in the current directory"
         return True, f".env found {where}"

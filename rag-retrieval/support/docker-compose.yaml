@@ -25,7 +25,7 @@ services:
       HF_HUB_CACHE: /home/lab/.cache/huggingface/hub
       HF_TOKEN: ${HF_TOKEN:-}
 
-      LLM_PROVIDER: ${LLM_PROVIDER:-bedrock}
+      LLM_PROVIDER: ${LLM_PROVIDER:-openai}
       AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID:-}
       AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY:-}
       AWS_SESSION_TOKEN: ${AWS_SESSION_TOKEN:-}
@@ -34,8 +34,12 @@ services:
       BEDROCK_MAX_TOKENS: ${BEDROCK_MAX_TOKENS:-1024}
       BEDROCK_TEMPERATURE: ${BEDROCK_TEMPERATURE:-0.2}
       OPENAI_API_KEY: ${OPENAI_API_KEY:-}
-      # OPENAI_BASE_URL: ${OPENAI_BASE_URL-https://api.openai.com/v1}
-      OPENAI_MODEL: ${OPENAI_MODEL:-}
+      OPENAI_BASE_URL: ${OPENAI_BASE_URL:-https://api.openai.com/v1}
+      OPENAI_MODEL: ${OPENAI_MODEL:-gpt-6-luna}
+
+      EMBEDDING_MODEL: ${EMBEDDING_MODEL:-sentence-transformers/all-MiniLM-L6-v2}
+      EMBEDDING_DIMENSION: ${EMBEDDING_DIMENSION:-384}
+      SPACY_MODEL: ${SPACY_MODEL:-en_core_web_sm}
 
       PORT: ${PORT-8000}
       NER_SERVICE_URL: ${NER_SERVICE_URL-http://127.0.0.1:8000/ner}
